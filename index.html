@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AURELIA Watches</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0b0b0d; --bg2:#121215; --card:#17171b; --gold:#d4af5a; --gold2:#f3dc9b; --text:#f4f1ea; --muted:#9b978d; --line:#2a2a30; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Poppins',Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; overflow-x:hidden; }
+  h1,h2,h3,.logo { font-family:'Playfair Display',Georgia,serif; }
+  a { color:inherit; text-decoration:none; }
+  .gold-text { background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  /* ---------- Header ---------- */
+  header { display:flex; justify-content:space-between; align-items:center; padding:14px 6%; position:sticky; top:0; z-index:20;
+           background:rgba(11,11,13,.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  .logo { font-size:1.6rem; letter-spacing:7px; }
+  nav { display:flex; gap:26px; }
+  nav a { font-size:.9rem; color:var(--muted); position:relative; transition:.3s; }
+  nav a::after { content:""; position:absolute; left:0; bottom:-4px; width:0; height:1px; background:var(--gold); transition:.3s; }
+  nav a:hover { color:var(--gold); } nav a:hover::after { width:100%; }
+  .right { display:flex; align-items:center; gap:12px; }
+  #welcome { color:var(--gold); font-size:.9rem; }
+  .menu { display:none; background:none; border:none; color:var(--gold); font-size:1.6rem; cursor:pointer; }
+
+  /* ---------- Buttons ---------- */
+  button, .btn { font-family:inherit; font-size:.95rem; cursor:pointer; border-radius:30px; padding:11px 28px; border:none;
+                 background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#16130a; font-weight:500; transition:.3s; display:inline-block; }
+  button:hover, .btn:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(212,175,90,.3); }
+  .ghost { background:transparent; color:var(--gold); border:1px solid var(--gold); }
+  .ghost:hover { background:var(--gold); color:#16130a; }
+
+  /* ---------- Hero ---------- */
+  .hero { display:grid; grid-template-columns:1.1fr .9fr; align-items:center; gap:30px; padding:90px 6% 80px; min-height:88vh;
+          background:radial-gradient(circle at 75% 45%, rgba(212,175,90,.18), transparent 55%), var(--bg); }
+  .tag { color:var(--gold); letter-spacing:5px; font-size:.8rem; margin-bottom:14px; }
+  .hero h1 { font-size:clamp(2.4rem,5vw,4rem); line-height:1.15; margin-bottom:18px; }
+  .hero p { color:var(--muted); max-width:480px; margin-bottom:30px; font-weight:300; }
+  .hero .btns { display:flex; gap:14px; flex-wrap:wrap; }
+  .hero-watch { max-width:380px; margin:0 auto; animation:float 5s ease-in-out infinite; filter:drop-shadow(0 25px 40px rgba(0,0,0,.6)); }
+  @keyframes float { 50% { transform:translateY(-14px); } }
+  .sec { transform-origin:100px 100px; animation:tick 60s linear infinite; }
+  @keyframes tick { to { transform:rotate(360deg); } }
+
+  /* ---------- Features strip ---------- */
+  .features { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; padding:34px 6%;
+              background:var(--bg2); border-block:1px solid var(--line); text-align:center; }
+  .features div { font-size:.9rem; color:var(--muted); }
+  .features b { display:block; color:var(--text); font-weight:500; }
+  .features span { font-size:1.6rem; }
+
+  /* ---------- Sections ---------- */
+  section { padding:90px 6%; }
+  .head { text-align:center; margin-bottom:46px; }
+  .head small { color:var(--gold); letter-spacing:5px; font-size:.75rem; }
+  .head h2 { font-size:2.2rem; margin-top:6px; }
+  .head::after { content:""; display:block; width:60px; height:2px; background:var(--gold); margin:16px auto 0; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:24px; }
+
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:26px 22px; text-align:center;
+          transition:.35s; position:relative; overflow:hidden; }
+  .card:hover { transform:translateY(-8px); border-color:var(--gold); box-shadow:0 18px 40px rgba(0,0,0,.5); }
+  .card svg { width:150px; margin:0 auto 10px; display:block; transition:.4s; }
+  .card:hover svg { transform:scale(1.07) rotate(-3deg); }
+  .card h3 { font-size:1.2rem; margin-bottom:2px; }
+  .card p { color:var(--muted); font-size:.85rem; }
+  .price { color:var(--gold) !important; font-size:1.15rem !important; margin:8px 0 14px; font-weight:500; }
+  .badge { position:absolute; top:14px; left:14px; background:var(--gold); color:#16130a; font-size:.7rem; padding:2px 12px; border-radius:20px; font-weight:500; }
+
+  /* ---------- Contact ---------- */
+  #contact { background:var(--bg2); }
+  .contact-wrap { display:grid; grid-template-columns:1fr 1fr; gap:40px; max-width:1100px; margin:0 auto; }
+  .panel { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:34px; }
+  .panel h3 { font-size:1.4rem; margin-bottom:6px; }
+  .panel > p { color:var(--muted); font-size:.9rem; margin-bottom:20px; }
+  form { display:grid; gap:14px; }
+  label { font-size:.8rem; color:var(--muted); letter-spacing:1px; }
+  input, textarea { width:100%; padding:12px 14px; background:var(--bg); border:1px solid var(--line); color:var(--text);
+                    font-family:inherit; font-size:.95rem; border-radius:8px; transition:.3s; margin-top:4px; }
+  input:focus, textarea:focus { outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(212,175,90,.15); }
+  .error { color:#ee7b7b; font-size:.78rem; min-height:1em; }
+  .thanks { display:none; text-align:center; padding:30px 10px; }
+  .thanks .check { width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold2));
+                   color:#16130a; font-size:2rem; line-height:70px; margin:0 auto 16px; }
+
+  .info-item { display:flex; gap:16px; align-items:flex-start; padding:16px 0; border-bottom:1px solid var(--line); }
+  .info-item:last-child { border:none; }
+  .ico { width:46px; height:46px; flex:none; border-radius:50%; border:1px solid var(--gold); display:grid; place-items:center; font-size:1.2rem; }
+  .info-item h4 { color:var(--gold); font-weight:500; font-size:.95rem; }
+  .info-item p { color:var(--muted); font-size:.88rem; }
+
+  /* ---------- Follow ---------- */
+  .follow { text-align:center; }
+  .social { display:flex; justify-content:center; gap:14px; flex-wrap:wrap; }
+  .social a { padding:11px 26px; border:1px solid var(--line); border-radius:30px; color:var(--muted); transition:.3s; }
+  .social a:hover { border-color:var(--gold); color:#16130a; background:var(--gold); transform:translateY(-3px); }
+
+  footer { text-align:center; padding:46px 6%; border-top:1px solid var(--line); background:var(--bg2); }
+  footer .logo { font-size:1.3rem; margin-bottom:8px; }
+  footer p { color:var(--muted); font-size:.85rem; }
+
+  /* ---------- Modal ---------- */
+  .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.8); backdrop-filter:blur(4px); align-items:center; justify-content:center; z-index:50; padding:16px; }
+  .modal.open { display:flex; }
+  .box { background:var(--card); padding:32px; width:100%; max-width:390px; border:1px solid var(--gold); border-radius:16px; display:grid; gap:12px; animation:pop .3s; }
+  @keyframes pop { from { opacity:0; transform:scale(.92); } }
+  .box h3 { text-align:center; font-size:1.5rem; }
+  .tabs { display:flex; gap:8px; }
+  .tabs button { flex:1; padding:9px; }
+  .tabs .off { background:transparent; color:var(--muted); border:1px solid var(--line); }
+  .close { background:none !important; color:var(--muted); justify-self:end; padding:0; font-size:1.5rem; box-shadow:none !important; }
+
+  /* ---------- Back to top + reveal ---------- */
+  #top { position:fixed; right:22px; bottom:22px; width:46px; height:46px; padding:0; font-size:1.2rem; display:none; z-index:15; }
+  .reveal { opacity:0; transform:translateY(34px); transition:1s; }
+  .reveal.show { opacity:1; transform:none; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:820px) {
+    .hero, .contact-wrap { grid-template-columns:1fr; text-align:center; }
+    .hero p { margin-inline:auto; } .hero .btns { justify-content:center; }
+    .menu { display:block; }
+    nav { display:none; position:absolute; top:100%; left:0; right:0; flex-direction:column; gap:0; background:var(--bg); border-bottom:1px solid var(--line); }
+    nav.open { display:flex; } nav a { padding:14px 6%; border-top:1px solid var(--line); }
+    .info-item { text-align:left; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo gold-text">AURELIA</div>
+  <nav id="nav">
+    <a href="#home">Home</a><a href="#collection">Collection</a>
+    <a href="#contact">Contact</a><a href="#visit">Visit Us</a>
+  </nav>
+  <div class="right">
+    <span id="welcome"></span>
+    <button id="authBtn" class="ghost">Log In</button>
+    <button class="menu" id="menuBtn" aria-label="Menu">&#9776;</button>
+  </div>
+</header>
+
+<div class="hero" id="home">
+  <div>
+    <div class="tag">SWISS INSPIRED · EST. 2026</div>
+    <h1>Time, <span class="gold-text">Perfectly</span> Crafted</h1>
+    <p>AURELIA Watches blends classic design with modern precision. Find the timepiece that tells your story.</p>
+    <div class="btns">
+      <a href="#collection" class="btn">View Collection</a>
+      <a href="#contact" class="btn ghost">Contact Us</a>
+    </div>
+  </div>
+  <div class="hero-watch" id="heroWatch"></div>
+</div>
+
+<div class="features">
+  <div><span>🛡️</span><b>2-Year Warranty</b>On all watches</div>
+  <div><span>💧</span><b>Water Resistant</b>Up to 50 meters</div>
+  <div><span>🚚</span><b>Free Delivery</b>Nationwide shipping</div>
+  <div><span>🎁</span><b>Gift Ready</b>Premium box included</div>
+</div>
+
+<section id="collection">
+  <div class="head reveal"><small>SHOP</small><h2>Our Collection</h2></div>
+  <div class="grid" id="products"></div>
+</section>
+
+<section id="contact">
+  <div class="head reveal"><small>CONTACT</small><h2>Send Us a Message</h2></div>
+  <div class="contact-wrap">
+    <div class="panel reveal">
+      <h3>Let's talk</h3>
+      <p>Fill out the form and we will reply as soon as possible.</p>
+      <form id="contactForm" novalidate>
+        <div><label for="name">YOUR NAME</label><input id="name" type="text" placeholder="Juan Dela Cruz"><div class="error" id="e-name"></div></div>
+        <div><label for="email">EMAIL ADDRESS</label><input id="email" type="email" placeholder="you@email.com"><div class="error" id="e-email"></div></div>
+        <div><label for="phone">PHONE NUMBER</label><input id="phone" type="tel" placeholder="09123456789"><div class="error" id="e-phone"></div></div>
+        <div><label for="subject">SUBJECT</label><input id="subject" type="text" placeholder="How can we help?"><div class="error" id="e-subject"></div></div>
+        <div><label for="message">MESSAGE</label><textarea id="message" rows="4" placeholder="Write your message here..."></textarea><div class="error" id="e-message"></div></div>
+        <button type="submit">Send Message</button>
+      </form>
+      <div class="thanks" id="thanks">
+        <div class="check">✓</div>
+        <h3>Thank you!</h3>
+        <p>Your message has been sent. We will get back to you soon.</p><br>
+        <button id="again" class="ghost">Send another message</button>
+      </div>
+    </div>
+
+    <div class="panel reveal" id="visit">
+      <h3>Find Us</h3>
+      <p>We would love to hear from you.</p>
+      <div class="info-item"><div class="ico">📍</div><div><h4>Visit Us</h4><p>123 Sample Street<br>Your City, Philippines</p></div></div>
+      <div class="info-item"><div class="ico">📞</div><div><h4>Call Us</h4><p>+63 900 000 0000</p></div></div>
+      <div class="info-item"><div class="ico">✉️</div><div><h4>Email Us</h4><p>hello@aurelia-watches.com</p></div></div>
+      <div class="info-item"><div class="ico">🕘</div><div><h4>Opening Hours</h4><p>Mon – Fri: 9:00 AM – 6:00 PM<br>Sat: 10:00 AM – 5:00 PM<br>Sun: Closed</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="follow">
+  <div class="head reveal"><small>COMMUNITY</small><h2>Follow Us</h2></div>
+  <div class="social reveal">
+    <a href="#">Facebook</a><a href="#">Instagram</a><a href="#">TikTok</a><a href="#">YouTube</a>
+  </div>
+</section>
+
+<footer>
+  <div class="logo gold-text">AURELIA</div>
+  <p>Thank you for visiting AURELIA Watches!</p>
+  <p>&copy; 2026 AURELIA Watches. All rights reserved.</p>
+</footer>
+
+<button id="top" aria-label="Back to top">↑</button>
+
+<!-- LOGIN / REGISTER MODAL -->
+<div class="modal" id="modal">
+  <div class="box">
+    <button class="close" id="closeModal">&times;</button>
+    <h3 class="gold-text">Welcome</h3>
+    <div class="tabs">
+      <button id="tabLogin">Log In</button>
+      <button id="tabReg" class="off">Register</button>
+    </div>
+    <input id="aName" type="text" placeholder="Full name" style="display:none">
+    <input id="aEmail" type="email" placeholder="Email address">
+    <input id="aPass" type="password" placeholder="Password (min 6 characters)">
+    <div class="error" id="aError"></div>
+    <button id="aSubmit">Log In</button>
+  </div>
+</div>
+
+<script>
+  // ---------- Draw watches with SVG ----------
+  function watchSVG(caseColor, dialColor, strapColor, animate) {
+    var ticks = "";
+    for (var i = 0; i < 12; i++) {
+      ticks += '<line x1="100" y1="34" x2="100" y2="' + (i % 3 === 0 ? 46 : 41) + '" stroke="' + caseColor +
+               '" stroke-width="' + (i % 3 === 0 ? 3 : 1.5) + '" transform="rotate(' + (i * 30) + ' 100 100)"/>';
+    }
+    return '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">' +
+      '<rect x="72" y="0" width="56" height="200" rx="14" fill="' + strapColor + '"/>' +
+      '<circle cx="100" cy="100" r="66" fill="' + caseColor + '"/>' +
+      '<circle cx="100" cy="100" r="58" fill="' + dialColor + '"/>' + ticks +
+      '<text x="100" y="72" text-anchor="middle" font-size="7" letter-spacing="2" fill="' + caseColor + '" font-family="Georgia">AURELIA</text>' +
+      '<line x1="100" y1="100" x2="100" y2="68" stroke="' + caseColor + '" stroke-width="4" stroke-linecap="round" transform="rotate(300 100 100)"/>' +
+      '<line x1="100" y1="100" x2="100" y2="50" stroke="' + caseColor + '" stroke-width="3" stroke-linecap="round" transform="rotate(60 100 100)"/>' +
+      '<g' + (animate ? ' class="sec"' : ' transform="rotate(140 100 100)"') + '><line x1="100" y1="110" x2="100" y2="44" stroke="#e0533d" stroke-width="1.5"/></g>' +
+      '<circle cx="100" cy="100" r="4" fill="#e0533d"/></svg>';
+  }
+
+  document.getElementById("heroWatch").innerHTML = watchSVG("#d4af5a", "#0e0e12", "#3a2a1a", true);
+
+  var products = [
+    { name:"Classic Gold",   price:"₱12,500", c:"#d4af5a", d:"#101014", s:"#3a2a1a", badge:"Best Seller" },
+    { name:"Midnight Steel", price:"₱9,800",  c:"#c9ced6", d:"#12233f", s:"#222831", badge:"" },
+    { name:"Sport Chrono",   price:"₱7,900",  c:"#b9bec6", d:"#1b1b1d", s:"#c0392b", badge:"New" },
+    { name:"Rose Elegance",  price:"₱11,200", c:"#d9a38f", d:"#f4ece6", s:"#5a3d38", badge:"" }
+  ];
+  var html = "";
+  products.forEach(function (p) {
+    html += '<div class="card reveal">' + (p.badge ? '<span class="badge">' + p.badge + '</span>' : '') +
+            watchSVG(p.c, p.d, p.s, false) +
+            '<h3>' + p.name + '</h3><p>Quartz · Water resistant</p><p class="price">' + p.price + '</p>' +
+            '<a href="#contact" class="btn ghost">Inquire</a></div>';
+  });
+  document.getElementById("products").innerHTML = html;
+
+  // ---------- Menu, back to top, scroll reveal ----------
+  var nav = document.getElementById("nav");
+  document.getElementById("menuBtn").onclick = function () { nav.classList.toggle("open"); };
+  nav.onclick = function () { nav.classList.remove("open"); };
+
+  var topBtn = document.getElementById("top");
+  topBtn.onclick = function () { window.scrollTo({ top: 0, behavior: "smooth" }); };
+  window.onscroll = function () { topBtn.style.display = window.scrollY > 500 ? "block" : "none"; };
+
+  var items = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("show"); io.unobserve(en.target); } });
+    }, { threshold: 0.12 });
+    items.forEach(function (el) { io.observe(el); });
+  } else {
+    items.forEach(function (el) { el.classList.add("show"); });
+  }
+
+  // ---------- Simple storage helpers (demo only: data stays in this browser) ----------
+  function load(key, fallback) {
+    try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function save(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  var currentUser = load("currentUser", null);
+  var mode = "login";
+  var modal = document.getElementById("modal");
+  var authBtn = document.getElementById("authBtn");
+  var welcome = document.getElementById("welcome");
+
+  function updateHeader() {
+    if (currentUser) {
+      welcome.textContent = "Hi, " + currentUser.name.split(" ")[0];
+      authBtn.textContent = "Log Out";
+      document.getElementById("name").value = currentUser.name;
+      document.getElementById("email").value = currentUser.email;
+    } else {
+      welcome.textContent = "";
+      authBtn.textContent = "Log In";
+    }
+  }
+
+  function setMode(m) {
+    mode = m;
+    var reg = m === "register";
+    document.getElementById("aName").style.display = reg ? "block" : "none";
+    document.getElementById("aSubmit").textContent = reg ? "Create Account" : "Log In";
+    document.getElementById("tabLogin").className = reg ? "off" : "";
+    document.getElementById("tabReg").className = reg ? "" : "off";
+    document.getElementById("aError").textContent = "";
+  }
+
+  authBtn.onclick = function () {
+    if (currentUser) {                       // log out
+      currentUser = null;
+      save("currentUser", null);
+      document.getElementById("contactForm").reset();
+      updateHeader();
+    } else {
+      modal.className = "modal open";
+    }
+  };
+  document.getElementById("closeModal").onclick = function () { modal.className = "modal"; };
+  document.getElementById("tabLogin").onclick = function () { setMode("login"); };
+  document.getElementById("tabReg").onclick = function () { setMode("register"); };
+
+  document.getElementById("aSubmit").onclick = function () {
+    var name = document.getElementById("aName").value.trim();
+    var email = document.getElementById("aEmail").value.trim().toLowerCase();
+    var pass = document.getElementById("aPass").value;
+    var err = document.getElementById("aError");
+    var users = load("users", []);
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = "Enter a valid email address."; return; }
+    if (pass.length < 6) { err.textContent = "Password must be at least 6 characters."; return; }
+
+    if (mode === "register") {
+      if (name.length < 2) { err.textContent = "Please enter your name."; return; }
+      for (var i = 0; i < users.length; i++) {
+        if (users[i].email === email) { err.textContent = "Email is already registered."; return; }
+      }
+      users.push({ name: name, email: email, pass: pass });
+      save("users", users);
+      currentUser = { name: name, email: email };
+    } else {
+      var found = null;
+      for (var j = 0; j < users.length; j++) {
+        if (users[j].email === email && users[j].pass === pass) found = users[j];
+      }
+      if (!found) { err.textContent = "Wrong email or password."; return; }
+      currentUser = { name: found.name, email: found.email };
+    }
+    save("currentUser", currentUser);
+    modal.className = "modal";
+    document.getElementById("aPass").value = "";
+    updateHeader();
+  };
+
+  // ---------- Contact form validation ----------
+  document.getElementById("contactForm").onsubmit = function (ev) {
+    ev.preventDefault();
+    var ok = true;
+    function check(id, valid, msg) {
+      document.getElementById("e-" + id).textContent = valid ? "" : msg;
+      if (!valid) ok = false;
+    }
+    var v = function (id) { return document.getElementById(id).value.trim(); };
+
+    check("name", v("name").length >= 2, "Please enter your name.");
+    check("email", /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v("email")), "Enter a valid email address.");
+    check("phone", /^(\+63|0)9\d{9}$/.test(v("phone").replace(/[\s-]/g, "")), "Enter a valid PH mobile number (e.g. 09123456789).");
+    check("subject", v("subject").length >= 3, "Please enter a subject.");
+    check("message", v("message").length >= 10, "Message must be at least 10 characters.");
+
+    if (ok) {
+      document.getElementById("contactForm").style.display = "none";
+      document.getElementById("thanks").style.display = "block";
+    }
+  };
+  document.getElementById("again").onclick = function () {
+    document.getElementById("thanks").style.display = "none";
+    document.getElementById("contactForm").style.display = "grid";
+    document.getElementById("contactForm").reset();
+    updateHeader();
+  };
+
+  updateHeader();
+</script>
+</body>
+</html>
